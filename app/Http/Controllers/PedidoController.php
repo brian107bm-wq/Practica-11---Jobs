@@ -8,6 +8,7 @@ use App\Models\PedidoItem;
 use App\Models\Producto;
 use App\Jobs\EnviarConfirmacionPedido;
 use Illuminate\Support\Facades\DB;
+use App\Events\NuevoPedidoRecibido;
 
 class PedidoController extends Controller
 {
@@ -49,6 +50,8 @@ class PedidoController extends Controller
 
         EnviarConfirmacionPedido::dispatch($pedido)
             ->delay(now()->addSeconds(5));
+
+        event(new NuevoPedidoRecibido($pedido));
 
         return response()->json([
             'pedido_id' => $pedido->id
